@@ -1,0 +1,295 @@
+view: employee {
+  sql_table_name: "C##LOOKER".EMPLOYEE
+    ;;
+
+  dimension: age {
+    type: string
+    sql: ${TABLE}.AGE ;;
+  }
+
+  dimension: avg_seniority {
+    type: string
+    sql: ${TABLE}.AVG_SENIORITY ;;
+  }
+
+  dimension: ctc {
+    type: string
+    sql: ${TABLE}.CTC ;;
+  }
+
+  dimension: deptid {
+    type: string
+    sql: ${TABLE}.DEPTID ;;
+  }
+
+  dimension: doj {
+    type: date
+    sql: ${TABLE}.DOJ ;;
+  }
+
+  dimension_group: Date_of_join {
+    type: time
+    timeframes: [
+      raw,
+      time,
+      date,
+      week,
+      month,
+      month_num,
+      quarter,
+      year
+    ]
+    sql: ${TABLE}.DOJ ;;
+  }
+
+  dimension: date_year {
+    type: date
+    sql: $(${Date_of_join_year} ;;
+  }
+  dimension: empid {
+    primary_key: yes
+    type: string
+    sql: ${TABLE}.EMPID ;;
+  }
+
+  dimension: employee_type {
+    type: string
+    sql: ${TABLE}.EMPLOYEE_TYPE ;;
+  }
+
+  dimension: firstname {
+    type: string
+    sql: ${TABLE}.FIRSTNAME ;;
+  }
+
+  dimension: gender {
+    type: string
+    sql: ${TABLE}.GENDER ;;
+  }
+
+  dimension: lastname {
+    type: string
+    sql: ${TABLE}.LASTNAME ;;
+  }
+
+  dimension: leavers_column {
+    type: string
+    sql: ${TABLE}.LEAVERS_COLUMN ;;
+  }
+
+  dimension_group: leaving_date {
+    type: time
+    timeframes: [
+      raw,
+      time,
+      date,
+      week,
+      month,
+      quarter,
+      year
+    ]
+    sql: ${TABLE}.LEAVING_DATE ;;
+  }
+
+  dimension: mgrid {
+    type: string
+    sql: ${TABLE}.MGRID ;;
+  }
+
+  dimension: middlename {
+    type: string
+    sql: ${TABLE}.MIDDLENAME ;;
+  }
+
+  dimension: months_in_company {
+    type: string
+    sql: ${TABLE}.MONTHS_IN_COMPANY ;;
+  }
+
+  dimension: new_employees {
+    type: string
+    sql: ${TABLE}.NEW_EMPLOYEES ;;
+  }
+
+  dimension: subdepartment {
+    type: string
+    sql: ${TABLE}.SUBDEPARTMENT ;;
+  }
+  measure: count {
+    type: count
+    drill_fields: [middlename, lastname, firstname]
+  }
+
+  measure: average_age {
+    type: average
+    value_format_name: decimal_2
+    sql: ${age} ;;
+  }
+
+  measure: average_seniority {
+    type: average
+    value_format_name: percent_2
+    sql: ${avg_seniority} ;;
+  }
+  measure: new_employers {
+    type: sum
+    sql: ${new_employees} ;;
+  }
+
+  measure: leavers {
+    type: sum
+    sql: ${leavers_column} ;;
+  }
+  measure: male_female_count {
+    type: count
+    sql: ${gender} ;;
+  }
+  measure: male_count {
+    hidden: yes
+    type: count
+    sql: ${gender} ;;
+    filters: {
+      field: gender
+      value: "Male"
+    }
+  }
+
+  measure: female_count {
+    type: count
+    hidden: yes
+    sql: ${gender} ;;
+    filters: {
+      field: gender
+      value: "Female"
+    }
+  }
+  measure: male_percentage{
+    type: number
+    value_format_name: "percent_2"
+    label: "male"
+    sql: ((${male_count}) / (${male_female_count})) ;;
+  }
+
+  measure: female_percentage{
+    type: number
+    value_format_name: "percent_2"
+    label: "female"
+    sql: ((${female_count}) / (${male_female_count})) ;;
+  }
+
+  measure: Contract_Temp_count {
+    type: count
+    label: "Contract/Temp"
+    sql: ${employee_type} ;;
+    filters: {
+      field: employee_type
+      value: "Contract/Temp"
+      }
+  }
+
+  measure: Permanent_count {
+    type: count
+    label: "Permanent"
+    sql: ${employee_type} ;;
+    filters: {
+      field: employee_type
+      value: "Permanent"
+    }
+  }
+
+  measure: Contract_Temp_permanent_count {
+    hidden: yes
+    type: count
+    sql: ${employee_type} ;;
+  }
+
+  measure: Contract_Temp_Percentage{
+    type: number
+    value_format_name: "percent_2"
+    label: "Contract/Temp"
+    sql: ((${Contract_Temp_count}) / (${Contract_Temp_permanent_count})) ;;
+  }
+
+  measure: Permanent_Percentage{
+    type: number
+    value_format_name: "percent_2"
+    label: "Permanent"
+    sql: ((${Permanent_count}) / (${Contract_Temp_permanent_count})) ;;
+  }
+
+  dimension: period_comparison {
+    case: {
+      when: {
+        sql: ${Date_of_join_raw} >= DATE_TRUNC('year', GETDATE())
+                  AND
+                  ${Date_of_join_raw} < DATE_TRUNC('day', GETDATE());;
+        label: "This_Year_To_date"
+      }
+      when: {
+        sql: ${Date_of_join_raw} >= DATE_TRUNC('month', GETDATE())
+                  AND
+                  ${Date_of_join_raw} < DATE_TRUNC('day', GETDATE());;
+        label: "MTD"
+      }
+      when: {
+        sql: ${Date_of_join_raw} >= DATE_TRUNC('year', GETDATE() - interval '1 year')
+          AND
+          ${Date_of_join_raw} < DATE_TRUNC('day', GETDATE() - interval '1 year');;
+        label: "last_year_same_period"
+      }
+      when: {
+        sql: ${Date_of_join_raw} >= DATE_TRUNC('month', GETDATE())
+                  AND
+                  ${Date_of_join_raw} < DATE_TRUNC('day', GETDATE());;
+        label: "current_month"
+
+      }
+
+      when: {
+
+        sql: ${Date_of_join_raw} >= DATE_TRUNC('month', GETDATE() - interval '1 year')
+          AND
+          ${Date_of_join_raw} < DATE_TRUNC('day', GETDATE() - interval '1 year');;
+        label: "last_year_same_month_same_point"
+
+      }
+
+      when: {
+
+        sql: ${Date_of_join_raw} >= DATE_TRUNC('month',GETDATE()) - interval '1 month'
+            AND
+            ${Date_of_join_raw} < DATE_TRUNC('day', GETDATE() - interval '1 month');;
+        label: "last_month_same_point"
+
+      }
+
+      else: "unknown"
+    }
+  }
+    measure: count_of_employes{
+      type: count
+      sql: ${empid} ;;
+    }
+
+  measure: turnover_rate{
+    type: number
+    value_format_name: "percent_2"
+    label: "turnover_rate"
+    sql: ((${leavers}) / (${count_of_employes})) ;;
+  }
+
+  measure: occupied_employess {
+    type: number
+    label: "occupied_employess"
+    sql: ${count_of_employes}- ${leavers};;
+
+  }
+
+  measure: occupancy_rate{
+    type: number
+    value_format_name: "percent_2"
+    label: "occupancy_rate"
+    sql: ((${occupied_employess}) / (${count_of_employes})) ;;
+  }
+
+}

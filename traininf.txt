@@ -1,0 +1,133 @@
+view: training {
+  sql_table_name: "C##LOOKER".TRAINING
+    ;;
+
+  dimension: actual_no_of_participants {
+    type: number
+    sql: ${TABLE}.ACTUAL_NO_OF_PARTICIPANTS ;;
+  }
+
+  dimension: costs {
+    primary_key: yes
+    type: number
+    sql: ${TABLE}.COSTS ;;
+  }
+
+  dimension: external {
+    type: number
+    sql: ${TABLE}.EXTERNAL ;;
+  }
+
+  dimension: internal {
+    type: number
+    sql: ${TABLE}.INTERNAL ;;
+  }
+
+  dimension: month {
+    type: string
+  }
+
+  dimension: no_of_completed_training {
+    type: number
+    sql: ${TABLE}.NO_OF_COMPLETED_TRAINING ;;
+  }
+
+  dimension: occupancy_rate {
+    type: number
+    sql: ${TABLE}.OCCUPANCY_RATE ;;
+  }
+
+  dimension: quarter {
+    type: string
+    sql: ${TABLE}.QUARTER ;;
+  }
+
+  dimension: training_costs_person {
+    type: number
+    sql: ${TABLE}.TRAINING_COSTS_PERSON ;;
+  }
+
+  dimension: training_man_hr {
+    type: number
+    sql: ${TABLE}.TRAINING_MAN_HR ;;
+  }
+
+  dimension: traning_name {
+    type: string
+    sql: ${TABLE}.TRANING_NAME ;;
+  }
+
+  dimension: year {
+    type: string
+    sql: ${TABLE}."YEAR" ;;
+  }
+
+  measure: count {
+    type: count
+    drill_fields: [traning_name]
+  }
+
+  measure: training_man_hrs {
+    label: "training_man_hr"
+    type: sum
+    sql: ${TABLE}.TRAINING_MAN_HR ;;
+  }
+  measure: external_count {
+    label: "External_count"
+    type: sum
+    sql: ${external} ;;
+  }
+  measure: Internal_count {
+    label: "Internal_count"
+    type: sum
+    sql: ${internal} ;;
+  }
+
+  measure: actual_no_of_participantss {
+    label: "actual participiants"
+    type: sum
+    sql: ${TABLE}.ACTUAL_NO_OF_PARTICIPANTS ;;
+  }
+
+  measure: external_Percentage{
+    type: number
+    value_format_name: "percent_2"
+    label: "External"
+    sql: ((${actual_no_of_participantss}) / (${external_count})) ;;
+  }
+  measure: internal_Percentage{
+    type: number
+    value_format_name: "percent_2"
+    label: "Internal"
+    sql: ((${actual_no_of_participantss}) / (${Internal_count})) ;;
+  }
+  measure: avg_occupany_rate {
+    type: average
+    value_format_name: decimal_1
+    label: "Avg Occupancy Rate"
+    sql:100*${occupancy_rate} ;;
+  }
+
+  measure: occupany_rate{
+    type: number
+    value_format_name: percent_6
+    label: "Occupancy Rate"
+    sql:${avg_occupany_rate} ;;
+  }
+
+  measure: Training_cost_per_person {
+    type: average
+    value_format_name: usd
+    sql: ${training_costs_person} ;;
+  }
+  measure: no_of_completed_trainings {
+    type: sum_distinct
+    sql: ${no_of_completed_training} ;;
+  }
+
+  measure: total_costss {
+    type: sum_distinct
+    value_format_name: usd
+    sql: ${TABLE}.COSTS ;;
+  }
+}

@@ -1,0 +1,43 @@
+connection: "test_oracle"
+
+include: "*.view" # include all the views
+
+datagroup: poc_hr_analytics_default_datagroup {
+  # sql_trigger: SELECT MAX(id) FROM etl_log;;
+  max_cache_age: "1 hour"
+}
+explore: employee {
+  label: "Employee Details"
+  view_name: employee
+
+  join: sub_department {
+    view_label: "sub_department"
+    relationship: many_to_one
+    sql_on: ${sub_department.subdepartment} = ${employee.subdepartment} ;;
+  }
+  join: monthly_analysis {
+    view_label: "monthly_analysis"
+    relationship: many_to_one
+    sql_on: ${monthly_analysis.subdepartment_id}= ${sub_department.subdepartment} ;;
+  }
+  }
+
+explore: training {
+  label: "training"
+  view_name: training
+
+  join: month_no {
+    view_label: "month_no"
+    relationship: many_to_one
+    sql_on: ${month_no.month} = ${training.month} ;;
+}
+}
+explore: monthly_analysis {
+  view_label: "monthly_analysis"
+  view_name: monthly_analysis
+}
+
+explore: dates {
+  view_label: "dates"
+  view_name: dates
+}

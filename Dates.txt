@@ -1,0 +1,63 @@
+view: dates {
+  sql_table_name: "C##LOOKER".DATES
+    ;;
+
+  dimension: datevalue {
+    type: date
+    sql: ${TABLE}.DATEVALUE ;;
+  }
+  dimension_group: date_dimesion {
+    type: time
+    timeframes: [
+      raw,
+      time,
+      date,
+      week,
+      month,
+      month_num,
+      quarter,
+      year
+    ]
+    sql: ${TABLE}."DATEVALUE" ;;
+  }
+
+  dimension: dayvalue {
+    type: number
+    sql: ${TABLE}.DAYVALUE ;;
+  }
+
+  dimension: mon {
+    type: string
+    sql: ${TABLE}.MON ;;
+  }
+
+  dimension: monthvalue {
+    type: number
+    sql: ${TABLE}.MONTHVALUE ;;
+  }
+
+  dimension: monthvaluename {
+    type: string
+    sql: ${TABLE}.MONTHVALUENAME ;;
+  }
+
+  dimension: weekdayvalue {
+    type: string
+    sql: ${TABLE}.WEEKDAYVALUE ;;
+  }
+
+  dimension: weekdayvaluename {
+    type: string
+    sql: ${TABLE}.WEEKDAYVALUENAME ;;
+  }
+
+  dimension: yearvalue {
+    type: number
+    sql: ${TABLE}.YEARVALUE ;;
+  }
+
+  measure: count {
+    type: count
+    drill_fields: [monthvaluename, weekdayvaluename]
+  }
+}

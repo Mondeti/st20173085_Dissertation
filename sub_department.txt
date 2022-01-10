@@ -1,0 +1,31 @@
+view: sub_department {
+  sql_table_name: "C##LOOKER".SUB_DEPARTMENT
+    ;;
+
+  dimension: department_name {
+    type: string
+    sql: ${TABLE}.DEPARTMENT_NAME ;;
+  }
+
+  dimension: deptid {
+    type: number
+    value_format_name: id
+    sql: ${TABLE}.DEPTID ;;
+  }
+
+  dimension: subdepartment {
+    primary_key: yes
+    type: number
+    sql: ${TABLE}.SUBDEPARTMENT ;;
+  }
+
+  dimension: subdepartment_name {
+    type: string
+    sql: ${TABLE}.SUBDEPARTMENT_NAME ;;
+  }
+
+  measure: count {
+    type: count
+    drill_fields: [subdepartment_name, department_name]
+  }
+}

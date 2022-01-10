@@ -1,0 +1,156 @@
+view: monthly_analysis {
+  sql_table_name: "C##LOOKER".MONTHLY_ANALYSIS
+    ;;
+
+  dimension: age {
+    type: string
+    sql: ${TABLE}.AGE ;;
+  }
+
+  dimension: age___ {
+    type: string
+    sql: ${TABLE}.AGE___ ;;
+  }
+
+  dimension: date_ {
+    type: string
+    sql: ${TABLE}.DATE_ ;;
+  }
+
+  dimension: date_of_hire {
+    type: string
+    sql: ${TABLE}.DATE_OF_HIRE ;;
+  }
+
+  dimension: date_of_hire___ {
+    type: string
+    sql: ${TABLE}.DATE_OF_HIRE___ ;;
+  }
+
+  dimension: department {
+    type: string
+    sql: ${TABLE}.DEPARTMENT ;;
+  }
+
+  dimension: department_id {
+    type: string
+    sql: ${TABLE}.DEPARTMENT_ID ;;
+  }
+
+  dimension: dol {
+    type: string
+    sql: ${TABLE}.DOL ;;
+  }
+
+  dimension: employee_in_out {
+    type: string
+    sql: ${TABLE}.EMPLOYEE_IN_OUT ;;
+  }
+
+  dimension: employee_name {
+    type: string
+    sql: ${TABLE}.EMPLOYEE_NAME ;;
+  }
+
+  dimension: employee_name__ {
+    type: string
+    sql: ${TABLE}.EMPLOYEE_NAME__ ;;
+  }
+
+  dimension: employee_type {
+    type: string
+    sql: ${TABLE}.EMPLOYEE_TYPE ;;
+  }
+
+  dimension: gender {
+    type: string
+    sql: ${TABLE}.GENDER ;;
+  }
+
+  dimension: gender______ {
+    type: string
+    sql: ${TABLE}.GENDER______ ;;
+  }
+
+  dimension: month {
+    type: string
+    sql: ${TABLE}."MONTH" ;;
+  }
+
+  dimension: month_no {
+    type: string
+    sql: ${TABLE}.MONTH_NO ;;
+  }
+
+  dimension: no_ {
+    type: number
+    sql: ${TABLE}.NO ;;
+  }
+
+  dimension: number_of_open_positions {
+    type: number
+    sql: ${TABLE}.NUMBER_OF_OPEN_POSITIONS ;;
+  }
+
+  dimension: open_position {
+    type: string
+    sql: ${TABLE}.OPEN_POSITION ;;
+  }
+
+  dimension: reason_for_term {
+    type: string
+    sql: ${TABLE}.REASON_FOR_TERM ;;
+  }
+
+  dimension: subdepartment_id {
+    type: string
+    primary_key: yes
+    sql: ${TABLE}.SUBDEPARTMENT_ID ;;
+  }
+
+  dimension: type {
+    type: string
+    sql: ${TABLE}.TYPE ;;
+  }
+
+  dimension: year {
+    type: string
+    sql: ${TABLE}."YEAR" ;;
+  }
+
+  measure: count {
+    type: count
+    drill_fields: [employee_name,employee_in_out]
+  }
+
+
+  measure: no_of_leavers {
+    type: count
+    label: "Number of Leavers"
+    sql: ${employee_in_out} ;;
+    filters: {
+      field: employee_in_out
+      value: "Number of Leavers"
+    }
+  }
+  measure: no_of_new_employees {
+    type: count
+    label: "no_of_new_employees"
+    sql: ${employee_in_out} ;;
+    filters: {
+      field: employee_in_out
+      value: "Number of New Employee"
+    }
+  }
+
+  measure: Total {
+    type: sum
+    label: "Total"
+    sql: ${employee_in_out} ;;
+  }
+  measure: employee_In_Out {
+    type: sum
+    label: "employee_In_Out"
+    sql: ${TABLE}.EMPLOYEE_IN_OUT ;;
+  }
+  }
